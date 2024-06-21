@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { FilterProduct } from './dtos/filter_product.dto';
@@ -16,17 +20,24 @@ export class ProductService {
 
   async create_produt(data: ProductDto) {
     await this.existName(data.name);
-    const product_new = await this.product_repository.create(data);
-    const data_product = this.product_repository.save(product_new);
+    const product_new = this.product_repository.create(data);
+    const data_product = await this.product_repository.save(product_new);
     return data_product;
   }
   async get_product_id(id: string): Promise<ProductDto> {
-    return this.product_repository.findOneBy({ id });
+    try {
+      return this.product_repository.findOneBy({ id });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async get_product_all(): Promise<ReturnProductDto[]> {
-    const data = await this.product_repository.find({ order: { name: 'ASC' } });
-    return data;
+    try {
+      return await this.product_repository.find({ order: { name: 'ASC' } });
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async filter(filterTasks: FilterProduct): Promise<ProductEntity[]> {
@@ -43,7 +54,7 @@ export class ProductService {
       where: conditions,
     });
     if (!data_re) {
-      return this.get_product_all();
+      throw new BadRequestException('Not found/not exist this product!');
     }
     return data_re;
   }
@@ -53,13 +64,14 @@ export class ProductService {
   }
 
   async delete_product(id: string) {
+    await this.existProduct(id);
     return this.product_repository.delete(id);
   }
 
   async existProduct(id: string) {
     const product = this.get_product_id(id);
-    if (product) {
-      throw new NotFoundException('Dont exist');
+    if (!product) {
+      throw new NotFoundException('Exist product!');
     }
 
     return product;
@@ -67,7 +79,7 @@ export class ProductService {
 
   async existName(name: string) {
     const name_exist = await this.product_repository.findOneBy({ name });
-    if (name_exist) {
+    if (!name_exist) {
       throw new NotFoundException('Dont exist');
     }
     return name_exist;
