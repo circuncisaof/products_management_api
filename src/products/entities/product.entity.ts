@@ -1,11 +1,9 @@
-import { CartProductEntity } from 'src/cart-produt/entities/cart-product.entity';
 import { DepartmenttEntity } from 'src/departments/entities/department.entity';
 import {
   Column,
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -33,6 +31,6 @@ export class ProductEntity {
   @JoinColumn({ name: 'id_department', referencedColumnName: 'id' })
   department?: DepartmenttEntity[];
 
-  @OneToMany(() => CartProductEntity, (cartProduct) => cartProduct.product)
-  cartProduct?: CartProductEntity[];
+  // @OneToMany(() => CartProductEntity, (cartProduct) => cartProduct.product)
+  // cartProduct?: CartProductEntity[];
 }
