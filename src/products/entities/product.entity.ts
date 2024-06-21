@@ -5,7 +5,7 @@ export class ProductEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: false, length: 100, name: 'description' })
+  @Column({ nullable: false, length: 100, name: 'name' })
   name: string;
 
   @Column({ nullable: false, length: 200, name: 'description' })
@@ -17,6 +17,6 @@ export class ProductEntity {
   @Column({ nullable: false, name: 'category' })
   category: string;
 
-  @Column({ nullable: false, name: 'product_value' })
+  @Column({ nullable: false, name: 'department' })
   department: string;
 }
