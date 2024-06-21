@@ -29,8 +29,8 @@ export class ProductService {
     return data;
   }
 
-  async filter(FilterProduct: FilterProduct): Promise<ProductEntity[]> {
-    const { id, name, category } = FilterProduct;
+  async filter(filterTasks: FilterProduct): Promise<ProductEntity[]> {
+    const { id, name, category } = filterTasks;
     const conditions:
       | FindOptionsWhere<ProductEntity>
       | FindOptionsWhere<ProductEntity>[] = {
@@ -41,14 +41,10 @@ export class ProductService {
 
     const data_re = await this.product_repository.find({
       where: conditions,
-      order: {
-        name: 'ASC',
-      },
     });
     if (!data_re) {
       return this.get_product_all();
     }
-
     return data_re;
   }
 

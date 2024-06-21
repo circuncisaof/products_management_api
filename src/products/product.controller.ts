@@ -11,6 +11,7 @@ import {
 import { FilterProduct } from './dtos/filter_product.dto';
 import { ProductDto } from './dtos/product.dto';
 import { updateProduct } from './dtos/update.product.dto';
+import { ProductEntity } from './entities/product.entity';
 import { ProductService } from './product.service';
 
 @Controller('products')
@@ -21,24 +22,26 @@ export class ProductController {
   async create_produt(@Body() data: ProductDto) {
     return this.product_service.create_produt(data);
   }
+
+  @Get('filter')
+  async filter(@Query() filterTasks: FilterProduct): Promise<ProductEntity[]> {
+    if (Object.keys(filterTasks).length) {
+      return await this.product_service.filter(filterTasks);
+    } else {
+      this.product_service.get_product_all();
+    }
+  }
+
   @Get(':id')
   async get_product_id(@Param('id') id: string) {
+    console.log('aqui que esta chamando ');
+
     return this.product_service.get_product_id(id);
   }
 
   @Get()
   async get_product_all() {
     return this.product_service.get_product_all();
-  }
-
-  @Get('filter')
-  async filter(@Query() filterTasks: FilterProduct): Promise<ProductDto[]> {
-    console.log(filterTasks);
-    if (Object.keys(filterTasks).length) {
-      return await this.product_service.filter(filterTasks);
-    } else {
-      this.product_service.get_product_all();
-    }
   }
 
   @Patch(':id')
