@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { DepartmenttEntity } from 'src/departments/entities/department.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'products' })
 export class ProductEntity {
@@ -15,8 +22,12 @@ export class ProductEntity {
   product_value: string;
 
   @Column({ nullable: false, name: 'category' })
-  category: string;
+  category?: string;
 
-  @Column({ nullable: false, name: 'department' })
-  department: string;
+  @ManyToOne(
+    () => DepartmenttEntity,
+    (department: DepartmenttEntity) => department.products,
+  )
+  @JoinColumn({ name: 'id_department', referencedColumnName: 'id' })
+  department?: DepartmenttEntity[];
 }

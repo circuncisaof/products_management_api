@@ -12,12 +12,4 @@ export class ProductDto {
   @IsNotEmpty({ message: 'product_value field cannot be null' })
   @IsString()
   product_value: string;
-
-  @IsNotEmpty({ message: 'category field cannot be null' })
-  @IsString()
-  category: string;
-
-  @IsNotEmpty({ message: 'department field cannot be null' })
-  @IsString()
-  department: string;
 }
