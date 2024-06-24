@@ -50,7 +50,7 @@ export class ProductController {
 
   @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  async update_product(@Param('id') id: string, data: updateProduct) {
+  async update_product(@Param('id') id: string, @Body() data: updateProduct) {
     return this.product_service.update_product(id, data);
   }
 
