@@ -28,9 +28,13 @@ export class ProductService {
     const data_product = await this.product_repository.save(product_new);
     return data_product;
   }
+
   async get_product_id(id: string): Promise<ProductDto> {
     try {
-      return await this.product_repository.findOneBy({ id });
+      return await this.product_repository.findOne({
+        where: { id },
+        relations: { department: true },
+      });
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -38,7 +42,11 @@ export class ProductService {
 
   async get_product_all(): Promise<ReturnProductDto[]> {
     try {
-      return await this.product_repository.find({ order: { name: 'ASC' } });
+      const datas = await this.product_repository.find({
+        order: { name: 'ASC' },
+      });
+      console.log(datas);
+      return datas;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -86,9 +94,11 @@ export class ProductService {
 
   async existName(name: string) {
     const name_exist = await this.product_repository.findOneBy({ name });
-    if (!name_exist) {
-      throw new NotFoundException('Dont exist');
-    }
-    return name_exist;
+    console.log(name_exist);
+
+    //     if (!name_exist) {
+    //       throw new NotFoundException('Product not found');
+    //     }
+    //     return name_exist;
   }
 }
