@@ -49,7 +49,9 @@ export class ProductService {
       const datas = await this.product_repository.find({
         order: { name: 'ASC' },
       });
-      console.log(datas);
+
+      if (datas.length === 0) throw new NotFoundException('Not found');
+
       return datas;
     } catch (error) {
       throw new BadRequestException(error);
@@ -71,8 +73,10 @@ export class ProductService {
         where: conditions,
       });
 
+      if (data_re.length === 0) throw new NotFoundException('Not found');
       return data_re;
     } catch (error) {
+      this.get_product_all();
       throw new BadRequestException(`Something wrong! ${error}`);
     }
   }
@@ -82,13 +86,14 @@ export class ProductService {
       await this.existProduct(id);
       await this.existName(data.name);
 
-      if (!data.name.trim()) throw new BadRequestException('Product not null');
-      if (!data.category.trim())
-        throw new BadRequestException('Product not null');
-      if (!data.product_value.trim())
-        throw new BadRequestException('Product not null');
-      if (!data.description.trim())
-        throw new BadRequestException('Product not null');
+      const { name, category, product_value, description } = data;
+      const isBlank =
+        !name.trim() ||
+        !category.trim() ||
+        !product_value.trim() ||
+        !description.trim();
+
+      if (isBlank === true) throw new BadRequestException('Product not null');
 
       await this.product_repository.update(id, data);
       return this.existProduct(id);
@@ -102,7 +107,7 @@ export class ProductService {
       await this.existProduct(id);
       return this.product_repository.delete(id);
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(`Something wrong! ${error}`);
     }
   }
 
@@ -117,7 +122,6 @@ export class ProductService {
 
   async existName(name: string) {
     const name_exist = await this.product_repository.findOneBy({ name });
-    console.log(name_exist);
 
     if (name_exist) {
       throw new NotFoundException('Exist');
