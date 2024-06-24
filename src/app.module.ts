@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CartModule } from './cart/cart.module';
+import { CartEntity } from './cart/entities/cart.entity';
 import { DepartmentModule } from './departments/department.module';
 import { DepartmenttEntity } from './departments/entities/department.entity';
 import { ProductEntity } from './products/entities/product.entity';
@@ -9,6 +11,7 @@ import { ProductsModule } from './products/product.module';
   imports: [
     ProductsModule,
     DepartmentModule,
+    CartModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -16,7 +19,7 @@ import { ProductsModule } from './products/product.module';
       username: 'postgres',
       password: 'mari0001',
       database: 'postgres',
-      entities: [ProductEntity, DepartmenttEntity],
+      entities: [ProductEntity, DepartmenttEntity, CartEntity],
       synchronize: true,
     }),
   ],
