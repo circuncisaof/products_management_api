@@ -12,6 +12,9 @@ export class ProductEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ name: 'id_department', nullable: false })
+  id_department: string;
+
   @Column({ nullable: false, length: 100, name: 'name' })
   name: string;
 
@@ -26,11 +29,8 @@ export class ProductEntity {
 
   @ManyToOne(
     () => DepartmenttEntity,
-    (department: DepartmenttEntity) => department.products,
+    (department: DepartmenttEntity) => department.product,
   )
-  @JoinColumn({ name: 'id_department', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'id', referencedColumnName: 'id' })
   department?: DepartmenttEntity[];
-
-  // @OneToMany(() => CartProductEntity, (cartProduct) => cartProduct.product)
-  // cartProduct?: CartProductEntity[];
 }

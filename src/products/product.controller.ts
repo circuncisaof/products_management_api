@@ -39,8 +39,6 @@ export class ProductController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async get_product_id(@Param('id') id: string) {
-    console.log('aqui que esta chamando ');
-
     return this.product_service.get_product_id(id);
   }
 

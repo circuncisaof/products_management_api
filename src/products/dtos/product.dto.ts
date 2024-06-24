@@ -1,6 +1,9 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class ProductDto {
+  @IsString()
+  id_department: string;
+
   @IsNotEmpty({ message: 'name field cannot be null' })
   @IsString()
   name: string;

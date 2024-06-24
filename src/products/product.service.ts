@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { DepartmentService } from 'src/departments/department.service';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { FilterProduct } from './dtos/filter_product.dto';
 import { ProductDto } from './dtos/product.dto';
@@ -16,17 +17,20 @@ export class ProductService {
   constructor(
     @InjectRepository(ProductEntity)
     private product_repository: Repository<ProductEntity>,
+    private department_service: DepartmentService,
   ) {}
 
-  async create_produt(data: ProductDto) {
+  async create_produt(data: ProductDto): Promise<ProductDto> {
+    await this.department_service.exist_department(data.id_department);
     await this.existName(data.name);
+
     const product_new = this.product_repository.create(data);
     const data_product = await this.product_repository.save(product_new);
     return data_product;
   }
   async get_product_id(id: string): Promise<ProductDto> {
     try {
-      return this.product_repository.findOneBy({ id });
+      return await this.product_repository.findOneBy({ id });
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -60,7 +64,10 @@ export class ProductService {
   }
 
   async update_product(id: string, data: updateProduct) {
-    return `UPdate Product ${id}, ${data} `;
+    const exist_product = await this.existProduct(id);
+    if (!exist_product) throw new BadRequestException('Product not exist');
+    await this.product_repository.update(id, data);
+    return this.existProduct(id);
   }
 
   async delete_product(id: string) {
