@@ -35,7 +35,10 @@ export class DepartmentService {
   }
 
   async update_department(id: string, data: DepartmentUpdate) {
-    return `UPdate Product ${id}, ${data} `;
+    await this.exist_department(id);
+    await this.department_repo.update(id, data);
+    const new_data = await this.get_department_id(id);
+    return new_data;
   }
 
   async delete_department(id: string) {
