@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateDepartment } from './dtos/department.dtos';
@@ -14,13 +18,22 @@ export class DepartmentService {
   ) {}
 
   async create_department(data: CreateDepartment): Promise<CreateDepartment> {
+    const { name } = data;
+    const isBlank = !name.trim();
+
+    if (isBlank === true)
+      throw new BadRequestException('Name Department fields cannot be null');
+
     const new_data_dep = await this.department_repo.create(data);
     return this.department_repo.save(new_data_dep);
   }
 
   async get_department_all(): Promise<ReturnDepartment[]> {
     try {
-      return await this.department_repo.find({ order: { name: 'ASC' } });
+      const datas = await this.department_repo.find({ order: { name: 'ASC' } });
+
+      if (datas.length === 0) throw new NotFoundException('Not found!');
+      return datas;
     } catch (error) {
       throw new BadRequestException(error);
     }
@@ -36,7 +49,13 @@ export class DepartmentService {
 
   async update_department(id: string, data: DepartmentUpdate) {
     try {
-      await this.exist_department('id');
+      const { name } = data;
+      await this.exist_department(id);
+      const isBlank = !name.trim();
+
+      if (isBlank === true)
+        throw new BadRequestException('Name Department fields cannot be null');
+
       await this.department_repo.update(id, data);
       const new_data = await this.get_department_id(id);
       return new_data;
