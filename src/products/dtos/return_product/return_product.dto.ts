@@ -9,13 +9,13 @@ export class ReturnProductDto {
   product_value: string;
   categories?: string;
   departments?: ReturnDepartment[];
-
   constructor(productEntity: ProductEntity) {
     this.id = productEntity.id;
     this.name = productEntity.name;
     this.product_value = productEntity.product_value;
     this.categories = productEntity.category;
     this.amount = productEntity.amount;
+
     this.departments = productEntity.department.map(
       (department) => new ReturnDepartment(department),
     )
