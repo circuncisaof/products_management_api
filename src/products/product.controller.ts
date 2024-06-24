@@ -45,7 +45,7 @@ export class ProductController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async get_product_all() {
-    return this.product_service.get_product_all();
+    return await this.product_service.get_product_all();
   }
 
   @Patch(':id')
