@@ -20,16 +20,20 @@ export class ProductService {
     private department_service: DepartmentService,
   ) {}
 
-  async create_produt(data: ProductDto): Promise<ProductDto> {
-    await this.department_service.exist_department(data.id_department);
-    await this.existName(data.name);
+  async create_produt(data: ProductDto): Promise<ProductEntity> {
+    try {
+      await this.department_service.exist_department(data.id_department);
+      await this.existName(data.name);
 
-    const product_new = this.product_repository.create(data);
-    const data_product = await this.product_repository.save(product_new);
-    return data_product;
+      const product_new = this.product_repository.create(data);
+      const data_product = await this.product_repository.save(product_new);
+      return data_product;
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
-  async get_product_id(id: string): Promise<ProductDto> {
+  async get_product_id(id: string): Promise<ProductEntity> {
     try {
       return await this.product_repository.findOne({
         where: { id },
@@ -53,40 +57,59 @@ export class ProductService {
   }
 
   async filter(filterTasks: FilterProduct): Promise<ProductEntity[]> {
-    const { id, name, category } = filterTasks;
-    const conditions:
-      | FindOptionsWhere<ProductEntity>
-      | FindOptionsWhere<ProductEntity>[] = {
-      ...(id ? { id } : {}),
-      ...(name ? { name } : {}),
-      ...(category ? { category } : {}),
-    };
+    try {
+      const { id, name, category } = filterTasks;
+      const conditions:
+        | FindOptionsWhere<ProductEntity>
+        | FindOptionsWhere<ProductEntity>[] = {
+        ...(id ? { id } : {}),
+        ...(name ? { name } : {}),
+        ...(category ? { category } : {}),
+      };
 
-    const data_re = await this.product_repository.find({
-      where: conditions,
-    });
-    if (!data_re) {
-      throw new BadRequestException('Not found/not exist this product!');
+      const data_re = await this.product_repository.find({
+        where: conditions,
+      });
+
+      return data_re;
+    } catch (error) {
+      throw new BadRequestException(`Something wrong! ${error}`);
     }
-    return data_re;
   }
 
   async update_product(id: string, data: updateProduct) {
-    const exist_product = await this.existProduct(id);
-    if (!exist_product) throw new BadRequestException('Product not exist');
-    await this.product_repository.update(id, data);
-    return this.existProduct(id);
+    try {
+      await this.existProduct(id);
+      await this.existName(data.name);
+
+      if (!data.name.trim()) throw new BadRequestException('Product not null');
+      if (!data.category.trim())
+        throw new BadRequestException('Product not null');
+      if (!data.product_value.trim())
+        throw new BadRequestException('Product not null');
+      if (!data.description.trim())
+        throw new BadRequestException('Product not null');
+
+      await this.product_repository.update(id, data);
+      return this.existProduct(id);
+    } catch (error) {
+      throw new BadRequestException(`Something wrong! ${error}`);
+    }
   }
 
   async delete_product(id: string) {
-    await this.existProduct(id);
-    return this.product_repository.delete(id);
+    try {
+      await this.existProduct(id);
+      return this.product_repository.delete(id);
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   async existProduct(id: string) {
     const product = this.get_product_id(id);
     if (!product) {
-      throw new NotFoundException('Exist product!');
+      throw new NotFoundException('this product does not exist!');
     }
 
     return product;
@@ -96,9 +119,9 @@ export class ProductService {
     const name_exist = await this.product_repository.findOneBy({ name });
     console.log(name_exist);
 
-    //     if (!name_exist) {
-    //       throw new NotFoundException('Product not found');
-    //     }
-    //     return name_exist;
+    if (name_exist) {
+      throw new NotFoundException('Exist');
+    }
+    return name_exist;
   }
 }
