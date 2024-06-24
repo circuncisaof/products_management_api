@@ -38,6 +38,7 @@ export class ProductService {
       return await this.product_repository.findOne({
         where: { id },
         relations: { department: true },
+        order: { name: 'ASC' },
       });
     } catch (error) {
       throw new BadRequestException(error);
