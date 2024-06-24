@@ -26,5 +26,5 @@ export class DepartmenttEntity {
     () => ProductEntity,
     (product: ProductEntity) => product.department,
   )
-  products?: ProductEntity[];
+  product?: ProductEntity[];
 }
