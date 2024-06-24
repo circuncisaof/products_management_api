@@ -13,7 +13,7 @@ export class DepartmentService {
     private department_repo: Repository<DepartmenttEntity>,
   ) {}
 
-  async create_department(data: CreateDepartment) {
+  async create_department(data: CreateDepartment): Promise<CreateDepartment> {
     const new_data_dep = await this.department_repo.create(data);
     return this.department_repo.save(new_data_dep);
   }
@@ -26,29 +26,40 @@ export class DepartmentService {
     }
   }
 
-  async get_department_id(id: string): Promise<CreateDepartment> {
+  async get_department_id(id: string): Promise<ReturnDepartment> {
     try {
-      return this.department_repo.findOneBy({ id });
+      return await this.department_repo.findOneBy({ id });
     } catch (error) {
-      throw new BadRequestException(error);
+      throw new BadRequestException(`Something happened! ${error}`);
     }
   }
 
   async update_department(id: string, data: DepartmentUpdate) {
-    await this.exist_department(id);
-    await this.department_repo.update(id, data);
-    const new_data = await this.get_department_id(id);
-    return new_data;
+    try {
+      await this.exist_department('id');
+      await this.department_repo.update(id, data);
+      const new_data = await this.get_department_id(id);
+      return new_data;
+    } catch (error) {
+      throw new BadRequestException(`Something happened! ${error} ${id}`);
+    }
   }
 
   async delete_department(id: string) {
-    return this.department_repo.delete(id);
+    try {
+      await this.exist_department(id);
+      return this.department_repo.delete(id);
+    } catch (error) {
+      throw new BadRequestException(`Something happened! ${id} invalid`);
+    }
   }
 
   async exist_department(id: string) {
     const dep = await this.get_department_id(id);
-
-    if (!dep) throw new BadRequestException('Department its not exist');
+    if (!dep)
+      throw new BadRequestException(
+        `Type ${id} invalid or Department its not exist`,
+      );
 
     return dep;
   }
