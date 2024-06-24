@@ -22,6 +22,16 @@ export class ProductService {
 
   async create_produt(data: ProductDto): Promise<ProductEntity> {
     try {
+      const { name, category, product_value, description } = data;
+      const isBlank =
+        !name.trim() ||
+        !category.trim() ||
+        !product_value.trim() ||
+        !description.trim();
+
+      if (isBlank === true)
+        throw new BadRequestException('Product fields cannot be null');
+
       await this.department_service.exist_department(data.id_department);
       await this.existName(data.name);
 
