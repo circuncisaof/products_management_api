@@ -1,6 +1,7 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class ProductDto {
+  @IsNotEmpty({ message: 'department field cannot be null' })
   @IsString()
   id_department: string;
 
@@ -15,7 +16,12 @@ export class ProductDto {
   @IsNotEmpty({ message: 'amount field cannot be null' })
   @IsNumber()
   amount: number;
+
   @IsNotEmpty({ message: 'product_value field cannot be null' })
   @IsString()
   product_value: string;
+
+  @IsNotEmpty({ message: 'Category field cannot be null' })
+  @IsString()
+  category: string;
 }
