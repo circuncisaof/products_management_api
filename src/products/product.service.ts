@@ -50,7 +50,7 @@ export class ProductService {
         order: { name: 'ASC' },
       });
 
-      if (datas.length === 0) throw new NotFoundException('Not found');
+      if (datas.length === 0) throw new NotFoundException('Not found!');
 
       return datas;
     } catch (error) {
@@ -73,10 +73,9 @@ export class ProductService {
         where: conditions,
       });
 
-      if (data_re.length === 0) throw new NotFoundException('Not found');
+      if (data_re.length === 0) throw new NotFoundException('Not found!');
       return data_re;
     } catch (error) {
-      this.get_product_all();
       throw new BadRequestException(`Something wrong! ${error}`);
     }
   }
@@ -93,7 +92,8 @@ export class ProductService {
         !product_value.trim() ||
         !description.trim();
 
-      if (isBlank === true) throw new BadRequestException('Product not null');
+      if (isBlank === true)
+        throw new BadRequestException('Product fields cannot be null');
 
       await this.product_repository.update(id, data);
       return this.existProduct(id);
