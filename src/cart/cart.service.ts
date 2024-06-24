@@ -24,7 +24,7 @@ export class CartService {
       );
 
       if (data.amount >= cart_product.amount)
-        throw new BadRequestException('Amount maior que temos no estoque');
+        throw new BadRequestException('Higher value as we do not have stock');
 
       await this.cart_repo.create(data);
       return await this.cart_repo.save(data);
@@ -45,7 +45,7 @@ export class CartService {
   async existCart(id: string) {
     const cart = this.cart_repo.findOneBy({ id });
     if (!cart) {
-      throw new NotFoundException('this cart does not exist!');
+      throw new NotFoundException('This cart does not exist!');
     }
 
     return cart;
