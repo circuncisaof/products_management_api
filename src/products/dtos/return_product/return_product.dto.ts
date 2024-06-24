@@ -5,6 +5,7 @@ export class ReturnProductDto {
   id: string;
   name: string;
   description: string;
+  amount: number;
   product_value: string;
   categories?: string;
   departments?: ReturnDepartment[];
@@ -14,6 +15,7 @@ export class ReturnProductDto {
     this.name = productEntity.name;
     this.product_value = productEntity.product_value;
     this.categories = productEntity.category;
+    this.amount = productEntity.amount;
     this.departments = productEntity.department.map(
       (department) => new ReturnDepartment(department),
     )

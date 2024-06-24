@@ -24,6 +24,9 @@ export class ProductEntity {
   @Column({ nullable: false, name: 'product_value' })
   product_value: string;
 
+  @Column({ nullable: false, name: 'amount' })
+  amount: number;
+
   @Column({ nullable: false, name: 'category' })
   category?: string;
 
@@ -31,6 +34,6 @@ export class ProductEntity {
     () => DepartmenttEntity,
     (department: DepartmenttEntity) => department.product,
   )
-  @JoinColumn({ name: 'id', referencedColumnName: 'id' })
+  @JoinColumn({ name: 'id_department', referencedColumnName: 'id' })
   department?: DepartmenttEntity[];
 }

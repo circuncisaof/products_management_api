@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class ProductDto {
   @IsString()
@@ -12,6 +12,9 @@ export class ProductDto {
   @IsString()
   description: string;
 
+  @IsNotEmpty({ message: 'amount field cannot be null' })
+  @IsNumber()
+  amount: number;
   @IsNotEmpty({ message: 'product_value field cannot be null' })
   @IsString()
   product_value: string;
