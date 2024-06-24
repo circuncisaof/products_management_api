@@ -25,7 +25,7 @@ export class DepartmentController {
   }
 
   @Get()
-  @HttpCode(HttpStatus.GONE)
+  @HttpCode(HttpStatus.OK)
   async get_department_all() {
     return this.department.get_department_all();
   }
