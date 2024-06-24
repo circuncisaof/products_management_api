@@ -12,6 +12,7 @@ import {
 import { DepartmentService } from './department.service';
 import { CreateDepartment } from './dtos/department.dtos';
 import { DepartmentUpdate } from './dtos/department.update.dto';
+import { ReturnDepartment } from './dtos/return_department/return_department.dto';
 
 @Controller('departments')
 export class DepartmentController {
@@ -28,17 +29,17 @@ export class DepartmentController {
   async get_department_all() {
     return this.department.get_department_all();
   }
-  @Get('id')
-  async get_department_id(@Param('id') id: string) {
+  @Get(':id')
+  async get_department_id(@Param('id') id: string): Promise<ReturnDepartment> {
     return this.department.get_department_id(id);
   }
   @Patch(':id')
-  @HttpCode(HttpStatus.GONE)
+  @HttpCode(HttpStatus.OK)
   async update_department(
     @Param('id') id: string,
     @Body() data: DepartmentUpdate,
   ) {
-    return this.update_department(id, data);
+    return await this.department.update_department(id, data);
   }
 
   @Delete(':id')
